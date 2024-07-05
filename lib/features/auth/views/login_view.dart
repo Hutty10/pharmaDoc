@@ -1,0 +1,168 @@
+import 'dart:developer' show log;
+import 'dart:io' show Platform;
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_proj/core/utils/extensions/string_extension.dart';
+
+import '../../../config/router/route_path.dart';
+import '../providers/providers.dart';
+import 'widgets/auth_rich_text.dart';
+import 'widgets/google_button.dart';
+import 'widgets/label_textfield.dart';
+import 'widgets/remember_password_widget.dart';
+
+class LoginView extends ConsumerStatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends ConsumerState<LoginView> {
+  late GlobalKey<FormState> _formKey;
+  late TextEditingController _emailController, _passwordController;
+  @override
+  initState() {
+    super.initState();
+    _formKey = GlobalKey<FormState>();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    log('loginView build');
+    final ThemeData theme = Theme.of(context);
+    print(theme.colorScheme.primary);
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 72, 20, 0),
+          child: Column(
+            children: [
+              Gap(24.h),
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.only(top: 24.h, bottom: 60.h),
+                    children: [
+                      Text('Log in',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineLarge
+                          // ?.copyWith(color: theme.colorScheme.primary),
+                          ),
+                      Gap(6.h),
+                      Text(
+                        'Log in to your account',
+                        style: theme.textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Gap(32.h),
+                      LabelTextField(
+                        controller: _emailController,
+                        label: 'Email Address',
+                        hintText: 'Enter email',
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      Gap(24.h),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final isVisible = ref.watch(loginVisibilityProvider);
+                          return LabelTextField(
+                            controller: _passwordController,
+                            label: 'password',
+                            hintText: 'Enter password',
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.done,
+                            obscureText: !isVisible,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                ref
+                                        .read(loginVisibilityProvider.notifier)
+                                        .state =
+                                    !ref
+                                        .read(loginVisibilityProvider.notifier)
+                                        .state;
+                              },
+                              icon: Icon(
+                                isVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Gap(20.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const RememberPasswordWidget(),
+                          GestureDetector(
+                            onTap: () =>
+                                context.goNamed(RouteName.forgetPassword),
+                            child: Text(
+                              'Forgot Password?',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                letterSpacing: -0.12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Gap(158.h),
+                      ListenableBuilder(
+                        listenable: Listenable.merge(
+                          [_emailController, _passwordController],
+                        ),
+                        builder: (context, child) {
+                          final bool enable =
+                              _emailController.text.isNotEmpty &&
+                                  _passwordController.text.length >= 8;
+                          return FilledButton(
+                            onPressed: enable
+                                ? () => context.go(RouteName.home.toPath)
+                                : null,
+                            child: child,
+                          );
+                        },
+                        child: const Text('Log in'),
+                      ),
+                      Gap(24.h),
+                      if (Platform.isAndroid)
+                        GoogleButton(
+                          onPressed: () {},
+                          label: 'Continue with Google',
+                        ),
+                      Gap(24.h),
+                      AuthRichText(
+                        onSecondaryTap: () =>
+                            context.goNamed(RouteName.register),
+                        primaryText: 'Don\'t have an account?',
+                        secondaryText: 'Create account',
+                        letterSpacing: -0.12,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

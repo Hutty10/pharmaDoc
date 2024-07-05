@@ -1,0 +1,12 @@
+class RouteName {
+  static const String onboarding = 'onboarding';
+  static const String login = 'login';
+  static const String register = 'register';
+  static const String forgetPassword = 'forget-password';
+  static const String verifyCode = 'verify-code';
+  static const String newPassword = 'new-password';
+  static const String home = 'home';
+  static const String patient = 'patient';
+  static const String refers = 'refers';
+  static const String settings = 'settings';
+}
