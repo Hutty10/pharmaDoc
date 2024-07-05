@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/home/views/views.dart';
 import '../utils/extensions/string_extension.dart';
 
 import '../../config/router/route_path.dart';
@@ -51,7 +52,7 @@ class _BottomNavState extends State<BottomNav> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          Container(color: Colors.red),
+          const HomeView(),
           Container(color: Colors.green),
           Container(color: Colors.purple),
           Container(color: Colors.blue),
@@ -59,6 +60,7 @@ class _BottomNavState extends State<BottomNav> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
+        backgroundColor: theme.colorScheme.surface,
         selectedItemColor: theme.colorScheme.primary,
         unselectedItemColor: theme.colorScheme.inversePrimary,
         onTap: (index) {
