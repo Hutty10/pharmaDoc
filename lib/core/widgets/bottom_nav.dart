@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_proj/features/refer/presentation/pages/referscreen.dart';
+import 'package:health_proj/features/settings_profile/presentation/pages/settingsscreen.dart';
 import '../utils/extensions/string_extension.dart';
 
 import '../../config/router/route_path.dart';
@@ -53,8 +55,8 @@ class _BottomNavState extends State<BottomNav> {
         children: [
           Container(color: Colors.red),
           Container(color: Colors.green),
-          Container(color: Colors.purple),
-          Container(color: Colors.blue),
+          const ReferScreen(),
+          const SettingsprofilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
