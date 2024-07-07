@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_proj/features/refer/presentation/widgets/patientreferinfotext.dart';
 
 class ReferScreen extends StatelessWidget {
   const ReferScreen({
@@ -45,31 +46,5 @@ class ReferScreen extends StatelessWidget {
                 )),
           )),
         ));
-  }
-}
-
-class PatientReferInfoText extends StatelessWidget {
-  const PatientReferInfoText({
-    super.key,
-    required this.title,
-    required this.info,
-  });
-  final String title;
-  final String info;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-        ),
-        child: Text(info),
-      ),
-    ]);
   }
 }
