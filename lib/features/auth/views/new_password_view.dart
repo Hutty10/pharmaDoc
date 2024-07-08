@@ -44,8 +44,8 @@ class _NewPasswordViewState extends ConsumerState<NewPasswordView> {
           padding: EdgeInsets.fromLTRB(20.w, 72.h, 20.w, 0),
           child: Column(
             children: [
-              // SvgPicture.asset(AppAsset.logo),
-              Gap(24.h),
+              Image.asset('assets/images/logo_112X22.png', height: 45.h),
+              Gap(18.h),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(top: 24.h, bottom: 24.h),

@@ -6,7 +6,9 @@ import 'package:health_proj/features/auth/views/new_password_view.dart';
 import '../../core/utils/extensions/string_extension.dart';
 import '../../core/widgets/bottom_nav.dart';
 import '../../features/auth/views/views.dart';
+import '../../features/patient/view/views.dart';
 import './route_path.dart';
+import './error_page.dart';
 
 final GlobalKey<NavigatorState> _navugatorKey = GlobalKey<NavigatorState>();
 
@@ -16,6 +18,7 @@ final goRouterProvider = Provider<GoRouter>(
       debugLogDiagnostics: true,
       navigatorKey: _navugatorKey,
       initialLocation: RouteName.login.toPath,
+      errorBuilder: (context, state) => const ErrorPage(),
       routes: [
         // GoRoute(
         //   path: RouteName.onboarding.toPath,
@@ -64,6 +67,47 @@ final goRouterProvider = Provider<GoRouter>(
             final tab = state.pathParameters['tab']!;
             return BottomNav(tab: tab);
           },
+          routes: [
+            GoRoute(
+              path: RouteName.addPatient,
+              name: RouteName.addPatient,
+              builder: (context, state) {
+                return const AddPatientScreen();
+              },
+            ),
+            GoRoute(
+              path: ':id/${RouteName.addVitals}',
+              name: RouteName.addVitals,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return AddVitalsView(patientId: id);
+              },
+            ),
+            GoRoute(
+              path: ':id/${RouteName.referPatient}',
+              name: RouteName.referPatient,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return ReferPatientView(patientId: id);
+              },
+            ),
+            GoRoute(
+              path: ':id',
+              name: RouteName.patientSummary,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return PatientSummaryView(patientId: id);
+              },
+            ),
+            GoRoute(
+              path: ':id/${RouteName.patientVitals}',
+              name: RouteName.patientVitals,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return PatientVitalsListScreen(patientId: id);
+              },
+            ),
+          ],
         ),
       ],
     );

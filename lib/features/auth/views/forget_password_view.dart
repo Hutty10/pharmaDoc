@@ -42,7 +42,7 @@ class _ForgetPasswordViewState extends ConsumerState<ForgetPasswordView> {
           padding: EdgeInsets.fromLTRB(20.w, 72.h, 20.w, 0),
           child: Column(
             children: [
-              // SvgPicture.asset(AppAsset.logo),
+              Image.asset('assets/images/logo_112X22.png', height: 45.h),
               Gap(24.h),
               Expanded(
                 child: Form(

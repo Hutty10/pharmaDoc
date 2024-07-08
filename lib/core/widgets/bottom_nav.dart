@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:health_proj/features/refer/presentation/pages/referscreen.dart';
 import 'package:health_proj/features/settings_profile/presentation/pages/settingsscreen.dart';
 import '../../features/home/views/views.dart';
+import '../../features/patient/view/views.dart';
+import '../../features/setting/view/views.dart';
 import '../utils/extensions/string_extension.dart';
 
 import '../../config/router/route_path.dart';
@@ -55,7 +57,8 @@ class _BottomNavState extends State<BottomNav> {
         index: _selectedIndex,
         children: [
           const HomeView(),
-          Container(color: Colors.green),
+          const PatientView(),
+          const SettingsView(),
           const ReferScreen(),
           const SettingsprofilePage(),
         ],

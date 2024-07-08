@@ -34,4 +34,16 @@ class Validator {
     if (!RegExp(r'(?=.*[!@#\$&*~])').hasMatch(value)) return 'Password must contain at least one special character';
     return null;
   }
+
+  static String? confirmPasswordValidator(String? value, String? password) {
+    if (value == null || value.isEmpty) return 'Confirm password cannot be empty';
+    if (value != password) return 'Passwords do not match';
+    return null;
+  }
+
+  static String? ageValidator(String? value) {
+    if (value == null || value.isEmpty) return 'Age cannot be empty';
+    if (int.tryParse(value) == null) return 'Please enter a valid number';
+    return null;
+  }
 }

@@ -1,18 +1,19 @@
 import 'dart:developer' show log;
 import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_proj/core/utils/extensions/string_extension.dart';
 
 import '../../../config/router/route_path.dart';
+import '../../../core/utils/extensions/string_extension.dart';
 import '../providers/providers.dart';
-import 'widgets/auth_rich_text.dart';
-import 'widgets/google_button.dart';
-import 'widgets/label_textfield.dart';
-import 'widgets/remember_password_widget.dart';
+import './widgets/auth_rich_text.dart';
+import './widgets/google_button.dart';
+import './widgets/label_textfield.dart';
+import './widgets/remember_password_widget.dart';
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
@@ -43,7 +44,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
     log('loginView build');
     final ThemeData theme = Theme.of(context);
-    print(theme.colorScheme.primary);
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
@@ -51,7 +51,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
           padding: const EdgeInsets.fromLTRB(20, 72, 20, 0),
           child: Column(
             children: [
-              Gap(24.h),
+              Image.asset('assets/images/logo_112X22.png', height: 45.h),
+              Gap(18.h),
               Expanded(
                 child: Form(
                   key: _formKey,
