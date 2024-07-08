@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/home/views/views.dart';
+import '../../features/patient/view/views.dart';
+import '../../features/setting/view/views.dart';
 import '../utils/extensions/string_extension.dart';
 
 import '../../config/router/route_path.dart';
@@ -53,9 +55,9 @@ class _BottomNavState extends State<BottomNav> {
         index: _selectedIndex,
         children: [
           const HomeView(),
-          Container(color: Colors.green),
+          const PatientView(),
           Container(color: Colors.purple),
-          Container(color: Colors.blue),
+          const SettingsView(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
