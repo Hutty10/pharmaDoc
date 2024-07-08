@@ -55,12 +55,11 @@ class _BottomNavState extends State<BottomNav> {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: [
-          const HomeView(),
-          const PatientView(),
-          const SettingsView(),
-          const ReferScreen(),
-          const SettingsprofilePage(),
+        children: const [
+          HomeView(),
+          PatientView(),
+          ReferScreen(),
+          SettingsprofilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -40,9 +40,11 @@ class PatientReferCard extends StatelessWidget {
                               )));
                 },
                 style: OutlinedButton.styleFrom(
-                    fixedSize: const Size(double.maxFinite, 20),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
+                  fixedSize: const Size(double.maxFinite * 0.25, 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
                 child: const Text('View Summary'),
               ),
             ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:health_proj/features/refer/presentation/widgets/patientreferinfotext.dart';
 import 'package:health_proj/features/refer/presentation/widgets/petientrefercard.dart';
 
@@ -10,12 +12,15 @@ class ReferScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Patients'),
-        ),
-        body: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const PatientReferCard(),
-        ));
+      appBar: AppBar(
+        title: const Text('Refarals'),
+      ),
+      body: ListView.separated(
+        itemCount: 4,
+        padding: EdgeInsets.symmetric(horizontal: 16.h),
+        separatorBuilder: (_, __) => Gap(6.h),
+        itemBuilder: (context, index) => const PatientReferCard(),
+      ),
+    );
   }
 }
