@@ -29,7 +29,7 @@ class AuthRepository {
     required File licenseCertificate,
   }) async {
     try {
-      final data = await _authService.register(
+      _authService.register(
         email,
         password,
         firstName,
@@ -38,9 +38,7 @@ class AuthRepository {
         userType,
         licenseCertificate,
       ) as Map<String, dynamic>;
-      print('token:  ${data['message']}');
     } on DioException catch (e) {
-      print('err: ${e.response?.data}');
       _handleDioException(e);
     } catch (e) {
       _handleGeneralException(Exception(e));
@@ -54,15 +52,19 @@ class AuthRepository {
     try {
       final data =
           await _authService.login(email, password) as Map<String, dynamic>;
-      print('token:  ${data['data']['token']}');
       final token = data['data']['token'] as String;
+      final userType = data['data']['type'] as String;
       // print(token);
-      await _saveToken(token);
+      await Future.wait([_saveToken(token), _saveUserType(userType)]);
     } on DioException catch (e) {
       _handleDioException(e);
     } catch (e) {
       _handleGeneralException(Exception(e));
     }
+  }
+
+  Future<void> _saveUserType(String type) async {
+    await _secureStorage.write(key: 'user_type', value: type);
   }
 
   Future<void> _saveToken(String token) async {
@@ -101,11 +103,9 @@ class AuthRepository {
       } else if (e.response?.statusCode == 500) {
         throw Exception('Internal server error: Please try again later.');
       } else {
-        print('object');
         throw Exception('Unexpected error: ${e.response?.data['message']}');
       }
     } else {
-      print('else');
       throw Exception('Unexpected error: ${e.message}');
     }
   }
