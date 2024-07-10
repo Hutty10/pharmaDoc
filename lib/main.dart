@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:health_proj/features/auth/controllers/provider/providers.dart';
 
 import './core/utils/app_provider_observer.dart';
 import './config/router/route_config.dart';
 import './config/theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  const secureStorage = FlutterSecureStorage();
+  final token = await secureStorage.read(key: 'auth_token');
   runApp(
-    const ProviderScope(
-      observers: [
+    ProviderScope(
+      overrides: [
+        authStateProvider.overrideWith((ref) => token),
+      ],
+      observers: const [
         AppProviderObserver(),
       ],
-      child: HealthApp(),
+      child: const HealthApp(),
     ),
   );
 }
@@ -34,7 +42,6 @@ class HealthApp extends ConsumerWidget {
         theme: AppTheme.theme(),
         themeMode: ThemeMode.dark,
         color: const Color(0xff4CAF50),
-        
       ),
     );
   }

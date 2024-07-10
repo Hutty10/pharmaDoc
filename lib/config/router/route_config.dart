@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show GlobalKey, NavigatorState;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_proj/features/auth/views/new_password_view.dart';
@@ -9,6 +11,8 @@ import '../../features/auth/views/views.dart';
 import '../../features/patient/view/views.dart';
 import './route_path.dart';
 import './error_page.dart';
+import 'auth_guards.dart';
+import 'redirect_builder.dart';
 
 final GlobalKey<NavigatorState> _navugatorKey = GlobalKey<NavigatorState>();
 
@@ -19,6 +23,13 @@ final goRouterProvider = Provider<GoRouter>(
       navigatorKey: _navugatorKey,
       initialLocation: RouteName.login.toPath,
       errorBuilder: (context, state) => const ErrorPage(),
+      // refreshListenable: ValueNotifier(ref.watch(authNotifierProvider)),
+      redirect: RedirectBuilder(
+        {
+          RedirectIfAuthenticatedGuard(),
+          RedirectIfUnauthenticatedGuard(),
+        },
+      ).call,
       routes: [
         // GoRoute(
         //   path: RouteName.onboarding.toPath,
