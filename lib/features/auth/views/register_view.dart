@@ -1,16 +1,20 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_proj/core/utils/extensions/string_extension.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../config/router/route_path.dart';
-// import '../../../core/constants/app_assets.dart';
 import '../../../core/utils/validators.dart';
+import '../controllers/provider/auth_notifier.dart';
+import '../controllers/provider/providers.dart';
+import '../models/register_param.dart';
 import '../providers/providers.dart';
 import 'widgets/auth_rich_text.dart';
 import 'widgets/google_button.dart';
@@ -30,7 +34,8 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
       _emailController,
       _phoneNumberController,
       _licenseController,
-      _passwordController;
+      _passwordController,
+      _userTypeController;
 
   @override
   void initState() {
@@ -50,6 +55,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
     _lastnameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
+    _userTypeController.dispose();
     _licenseController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -61,8 +67,84 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
         _emailController.text.isNotEmpty;
   }
 
+  Future<String?> _pickLicenseCertificateImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      return image.path;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> _tryRegister(RegisterParams params) async {
+    // final snackBar = ScaffoldMessenger.of(context);
+    if (_formKey.currentState!.validate()) {
+      await ref.read(authNotifierProvider.notifier).register(
+          params.email,
+          params.password,
+          params.firstName,
+          params.lastName,
+          params.phoneNumber,
+          params.userType,
+          params.licenseCertificate);
+      // if (ref.read(authNotifierProvider).error != null) {
+      //   snackBar.showSnackBar(
+      //     SnackBar(
+      //       content: Text(ref.read(authNotifierProvider).error!),
+      //     ),
+      //   );
+      // } else {}
+    }
+  }
+
+  void _showCountdownSnackbar() {
+    final snackBar = ScaffoldMessenger.of(context);
+    int countdown = 5;
+
+    snackBar.showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: countdown),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            Timer.periodic(const Duration(seconds: 1), (timer) {
+              setState(() {
+                countdown--;
+                if (countdown == 0) {
+                  timer.cancel();
+                  // final routerLoc =
+                  // if (routerLoc != '/login') {
+                  context.go(RouteName.login.toPath);
+                  // }
+                }
+              });
+            });
+            return Text(
+                'Registered successfully. Proceed to login in $countdown seconds.');
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      if (next != previous &&
+          next.error != previous?.error &&
+          next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error!)),
+        );
+      } else if (next != previous &&
+          previous?.error == next.error &&
+          previous?.error == null &&
+          next.isRegistered) {
+        _showCountdownSnackbar();
+      }
+    });
+
     log('register build');
     final ThemeData theme = Theme.of(context);
     return GestureDetector(
@@ -87,7 +169,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                       ),
                       Gap(6.h),
                       Text(
-                        'Create an account on Taskfuuse',
+                        'Create an account on PharmDoc',
                         style: theme.textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -120,7 +202,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                       Gap(20.h),
                       LabelTextField(
                         controller: _phoneNumberController,
-                        validator: Validator.phoneValidator,
+                        // validator: Validator.phoneValidator,
                         label: 'Phone Number',
                         hintText: 'Enter your phone number',
                         keyboardType: TextInputType.phone,
@@ -128,7 +210,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                       ),
                       Gap(20.h),
                       LabelTextField(
-                        controller: _licenseController,
+                        controller: _userTypeController,
                         readOnly: true,
                         onTap: () {},
                         label: 'Specialist type',
@@ -140,7 +222,13 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                       LabelTextField(
                         controller: _licenseController,
                         readOnly: true,
-                        onTap: () {},
+                        onTap: () async {
+                          final String? license =
+                              await _pickLicenseCertificateImage();
+                          if (license != null) {
+                            _licenseController.text = license;
+                          }
+                        },
                         label: 'License/Certificate',
                         hintText: 'Upload your license',
                         // keyboardType: TextInputType.phone,
@@ -185,17 +273,46 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                           _firstnameController,
                           _lastnameController,
                           _emailController,
-                          _passwordController
+                          _passwordController,
                         ]),
                         builder: (context, child) {
+                          final registerParams = RegisterParams(
+                            email: _emailController.text,
+                            firstName: _firstnameController.text,
+                            lastName: _lastnameController.text,
+                            password: _passwordController.text,
+                            phoneNumber: _phoneNumberController.text,
+                            userType: 'pharm',
+                            licenseCertificate: File(_licenseController.text),
+                          );
+                          final authState = ref.watch(authNotifierProvider);
                           return FilledButton(
-                            onPressed: _enableButton()
-                                ? () => context.goNamed(RouteName.login)
+                            onPressed: _enableButton() || authState.isLoading
+                                ? () {
+                                    _tryRegister(registerParams);
+                                  }
                                 : null,
                             child: child,
                           );
                         },
-                        child: const Text('Get Started'),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (ref.read(authNotifierProvider).isLoading)
+                              SizedBox(
+                                height: 24.h,
+                                width: 24.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              ),
+                            Gap(16.h),
+                            const Text('Sign Up'),
+                          ],
+                        ),
                       ),
                       Gap(24.h),
                       if (Platform.isAndroid)

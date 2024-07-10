@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../config/router/route_path.dart';
 import '../../../core/utils/extensions/string_extension.dart';
+import '../controllers/provider/auth_notifier.dart';
+import '../controllers/provider/providers.dart';
 import '../providers/providers.dart';
 import './widgets/auth_rich_text.dart';
 import './widgets/google_button.dart';
@@ -37,13 +39,35 @@ class _LoginViewState extends ConsumerState<LoginView> {
   dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    // ref.read(loginProvider).dispose();
     super.dispose();
+  }
+
+  Future<void> _tryLogin(String email, String password) async {
+    // final router = GoRouter.of(context);
+    await ref.read(authNotifierProvider.notifier).login(email, password);
+    // router.go(RouteName.home.toPath);
   }
 
   @override
   Widget build(BuildContext context) {
     log('loginView build');
+
     final ThemeData theme = Theme.of(context);
+    ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      if (next != previous &&
+          previous?.error == null &&
+          !next.isLoggedIn &&
+          next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error!)),
+        );
+      }
+      if (next != previous && next.isLoggedIn) {
+        context.go(RouteName.home.toPath);
+      }
+    });
+
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
@@ -133,14 +157,39 @@ class _LoginViewState extends ConsumerState<LoginView> {
                           final bool enable =
                               _emailController.text.isNotEmpty &&
                                   _passwordController.text.length >= 8;
+                          final authState = ref.watch(authNotifierProvider);
                           return FilledButton(
-                            onPressed: enable
-                                ? () => context.go(RouteName.home.toPath)
+                            onPressed: enable && !authState.isLoading
+                                ? () {
+                                    FocusScope.of(context).unfocus();
+
+                                    _tryLogin(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    );
+                                  }
                                 : null,
                             child: child,
                           );
                         },
-                        child: const Text('Log in'),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (ref.read(authNotifierProvider).isLoading)
+                              SizedBox(
+                                height: 24.h,
+                                width: 24.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              ),
+                            Gap(16.h),
+                            const Text('Log in'),
+                          ],
+                        ),
                       ),
                       Gap(24.h),
                       if (Platform.isAndroid)
