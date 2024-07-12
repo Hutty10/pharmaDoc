@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:health_proj/features/auth/models/user.dart';
 import '../service/auth_service.dart';
 
 class AuthRepository {
@@ -45,22 +46,27 @@ class AuthRepository {
     }
   }
 
-  Future<void> login({
+  Future<Map?> login({
     required String email,
     required String password,
   }) async {
     try {
       final data =
           await _authService.login(email, password) as Map<String, dynamic>;
+
       final token = data['data']['token'] as String;
       final userType = data['data']['type'] as String;
-      // print(token);
-      await Future.wait([_saveToken(token), _saveUserType(userType)]);
+      print('token $token');
+
+      Future.wait([_saveToken(token), _saveUserType(userType)]);
+
+      return data['data'];
     } on DioException catch (e) {
       _handleDioException(e);
     } catch (e) {
       _handleGeneralException(Exception(e));
     }
+    return null;
   }
 
   Future<void> _saveUserType(String type) async {

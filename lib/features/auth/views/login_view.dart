@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_proj/features/auth/controllers/provider/userprovider.dart';
+import 'package:health_proj/features/auth/models/doctor.dart';
+import 'package:health_proj/features/auth/models/pharm.dart';
 
 import '../../../config/router/route_path.dart';
 import '../../../core/utils/extensions/string_extension.dart';
@@ -45,7 +48,23 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   Future<void> _tryLogin(String email, String password) async {
     // final router = GoRouter.of(context);
-    await ref.read(authNotifierProvider.notifier).login(email, password);
+    log(' dat recieved');
+    await ref.read(authNotifierProvider.notifier).login(email, password).then(
+      (value) {
+        log(' dat recieved $value');
+        if (value != null) {
+          if (value['type'] == 'pharm') {
+            ref
+                .watch(userDataProvider.notifier)
+                .assignUser(Pharm.fromJson(value));
+          } else {
+            ref
+                .watch(userDataProvider.notifier)
+                .assignUser(Doctor.fromJson(value));
+          }
+        }
+      },
+    );
     // router.go(RouteName.home.toPath);
   }
 

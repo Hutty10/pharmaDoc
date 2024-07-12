@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,10 +52,15 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(isLoggedIn: isLoggedIn);
   void setError(String? error) => state = state.copyWith(error: error);
 
-  Future<void> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     setLoading(true);
     try {
-      await _authRepository.login(email: email, password: password);
+      await _authRepository.login(email: email, password: password).then(
+        (value) {
+          log('value in authnotifier$value');
+          return value;
+        },
+      );
       setError(null);
       setLoggedIn(true);
       // Login successful, navigate to home
@@ -65,6 +71,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       setLoading(false);
       setError(null);
     }
+    return null;
   }
 
   Future<void> register(
