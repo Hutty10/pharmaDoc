@@ -1,37 +1,23 @@
 import 'package:health_proj/features/auth/models/user.dart';
 
 class Doctor extends User {
-  final int id;
-  final String firstName;
-  final String lastName;
-  final String? specialization; // Optional field for specialization
-  final String email;
-  final String phone;
-  final String? gender; // Optional field for gender
-  final String type; // Assuming type refers to a doctor's profession
-  final String? licenseNumber; // Optional field for license number
-  final String? licenseCertificate; // Optional field for license certificate
-  final String? currentPractisingState; // Optional field for current state
-  final String? currentPractisingAddress; // Optional field for current address
-  final bool isActive;
-  final String? photo; // Optional field for profile photo
-
-  Doctor({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    this.specialization,
-    required this.email,
-    required this.phone,
-    this.gender,
-    required this.type,
-    this.licenseNumber,
-    this.licenseCertificate,
-    this.currentPractisingState,
-    this.currentPractisingAddress,
-    required this.isActive,
-    this.photo,
-  });
+  Doctor(
+      {required super.id,
+      required super.firstName,
+      required super.lastName,
+      required super.email,
+      required super.phone,
+      required super.specialization,
+      required super.currentPractisingAddress,
+      required super.currentPractisingState,
+      required super.gender,
+      required super.licenseNumber,
+      required super.photo,
+      required super.type,
+      required super.licenseCertificate,
+      required super.isActive,
+      required super.tempPhrase,
+      required super.token});
 
   factory Doctor.fromJson(Map<String, dynamic> json) => Doctor(
         id: json['id'] as int,
@@ -43,11 +29,13 @@ class Doctor extends User {
         gender: json['gender'] as String?,
         type: json['type'] as String,
         licenseNumber: json['license_number'] as String?,
-        licenseCertificate: json['license_certificate'] as String?,
+        licenseCertificate: json['license_certificate'] ?? '',
         currentPractisingState: json['current_practising_state'] as String?,
         currentPractisingAddress: json['current_practising_address'] as String?,
-        isActive: json['is_active'] as bool,
+        isActive: json['is_active'] == 0 ? true : false,
         photo: json['photo'] as String?,
+        tempPhrase: json['tempPhrase'] ?? "",
+        token: json['token'] ?? '',
       );
 
   // Add additional methods like toJson if needed

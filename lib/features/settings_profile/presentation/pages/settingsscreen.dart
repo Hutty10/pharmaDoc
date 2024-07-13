@@ -86,16 +86,13 @@ class SettingsprofilePage extends StatelessWidget {
 }
 
 class EditPatientScreen extends ConsumerStatefulWidget {
-  final Doctor? doctor;
   const EditPatientScreen({
     super.key,
-    this.doctor,
   });
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _EditPatientScreenState();
 }
-
 class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -108,17 +105,22 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.doctor != null) {
-      _firstNameController.text = widget.doctor!.firstName;
-      _lastNameController.text = widget.doctor!.lastName;
-      _emailController.text = widget.doctor!.email;
-      _phoneController.text = widget.doctor!.phone;
-      _specializationController.text =
-          widget.doctor!.specialization ?? ''; // Handle null value
-      _licenseNumberController.text = widget.doctor!.licenseNumber ?? '';
-      // Set values for other controllers from the Doctor object
+
+    // Retrieve the patient data from the provider
+    final pharm = ref.watch(userDataProvider);
+
+    if (pharm != null) {
+      // Update the state using dedicated methods (if available)
+      // Assuming your StateNotifier has these methods
+      ref.read(editPatientProvider).setFirstName(pharm.firstName);
+      ref.read(editPatientProvider).setLastName(pharm.lastName);
+      ref.read(editPatientProvider).setEmail(pharm.email);
+      ref.read(editPatientProvider).setPhone(pharm.phone);
+      ref.read(editPatientProvider).setSpecialization(pharm.specialization ?? '');
+      ref.read(editPatientProvider).setLicenseNumber(pharm.licenseNumber ?? '');
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

@@ -48,20 +48,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   Future<void> _tryLogin(String email, String password) async {
     // final router = GoRouter.of(context);
-    log(' dat recieved');
+
     await ref.read(authNotifierProvider.notifier).login(email, password).then(
       (value) {
-        log(' dat recieved $value');
-        if (value != null) {
-          if (value['type'] == 'pharm') {
-            ref
-                .watch(userDataProvider.notifier)
-                .assignUser(Pharm.fromJson(value));
-          } else {
-            ref
-                .watch(userDataProvider.notifier)
-                .assignUser(Doctor.fromJson(value));
-          }
+        log('dat recieved $value');
+        if (value['type'] == 'pharm') {
+          ref
+              .watch(userDataProvider.notifier)
+              .assignUser(Pharm.fromJson(value));
+        } else {
+          ref
+              .watch(userDataProvider.notifier)
+              .assignUser(Doctor.fromJson(value));
         }
       },
     );

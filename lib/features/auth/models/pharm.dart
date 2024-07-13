@@ -1,58 +1,40 @@
 import 'package:health_proj/features/auth/models/user.dart';
 
 class Pharm extends User {
-  final int id;
-  final String firstName;
-  final String lastName;
-  final String? specialization; // Optional field for specialization
-  final String email;
-  final String phone;
-  final String? gender; // Optional field for gender
-  final String type;
-  final String? licenseNumber; // Optional field for license number
-  final String licenseCertificate; // License certificate URL (String)
-  final String? currentPractisingState; // Optional field for current state
-  final String? currentPractisingAddress; // Optional field for current address
-  final bool isActive;
-  final String? photo; // Optional field for profile photo
-  final String tempPhrase; // Temporary phrase (String)
-  final String token; // Token (String)
-
-  Pharm({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    this.specialization,
-    required this.email,
-    required this.phone,
-    this.gender,
-    required this.type,
-    this.licenseNumber,
-    required this.licenseCertificate,
-    this.currentPractisingState,
-    this.currentPractisingAddress,
-    required this.isActive,
-    this.photo,
-    required this.tempPhrase,
-    required this.token,
-  });
+  Pharm(
+      {required super.id,
+      required super.firstName,
+      required super.lastName,
+      required super.email,
+      required super.phone,
+      required super.type,
+      required super.licenseCertificate,
+      required super.isActive,
+      required super.tempPhrase,
+      required super.currentPractisingAddress,
+      required super.currentPractisingState,
+      required super.gender,
+      required super.licenseNumber,
+      required super.photo,
+      required super.specialization,
+      required super.token});
 
   factory Pharm.fromJson(Map<String, dynamic> json) => Pharm(
         id: json['id'] as int,
-        firstName: json['first_name'] as String,
-        lastName: json['last_name'] as String,
-        specialization: json['specialization'] as String?,
-        email: json['email'] as String,
-        phone: json['phone'] as String,
-        gender: json['gender'] as String?,
+        firstName: json['first_name'] ?? '',
+        lastName: json['last_name'] ?? "",
+        specialization: json['specialization'] ?? "",
+        email: json['email'] ?? "",
+        phone: json['phone'] ?? "",
+        gender: json['gender'] ?? "",
         type: json['type'] as String,
-        licenseNumber: json['license_number'] as String?,
-        licenseCertificate: json['license_certificate'] as String,
-        currentPractisingState: json['current_practising_state'] as String?,
-        currentPractisingAddress: json['current_practising_address'] as String?,
-        isActive: json['is_active'] as bool,
-        photo: json['photo'] as String?,
-        tempPhrase: json['temp_phrase'] as String,
+        licenseNumber: json['license_number'] ?? "",
+        licenseCertificate: json['license_certificate'] ?? "",
+        currentPractisingState: json['current_practising_state'] ?? '',
+        currentPractisingAddress: json['current_practising_address'] ?? '',
+        isActive: json['is_active'] == 0 ? true : false,
+        photo: json['photo'] ?? "",
+        tempPhrase: json['temp_phrase'] ?? "",
         token: json['token'] as String,
       );
 }

@@ -46,27 +46,26 @@ class AuthRepository {
     }
   }
 
-  Future<Map?> login({
+  Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
+    late Map<String, dynamic> responseData;
     try {
-      final data =
-          await _authService.login(email, password) as Map<String, dynamic>;
-
-      final token = data['data']['token'] as String;
-      final userType = data['data']['type'] as String;
-      print('token $token');
-
-      Future.wait([_saveToken(token), _saveUserType(userType)]);
-
-      return data['data'];
+      await _authService.login(email, password).then(
+        (data) {
+          final token = data['data']['token'] as String;
+          final userType = data['data']['type'] as String;
+          Future.wait([_saveToken(token), _saveUserType(userType)]);
+          responseData = data['data'];
+        },
+      );
     } on DioException catch (e) {
       _handleDioException(e);
     } catch (e) {
       _handleGeneralException(Exception(e));
     }
-    return null;
+    return responseData;
   }
 
   Future<void> _saveUserType(String type) async {

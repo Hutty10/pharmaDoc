@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -22,12 +23,16 @@ class AuthService {
       'last_name': lastName,
       'phone': phoneNumber,
       'type': userType,
+      // 'type': 'pharm',
       'license_certificate': await MultipartFile.fromFile(
         licenseCertificate.path,
         filename: licenseCertificate.path.split('/').last,
       ),
     });
-    final Response response = await _dio.post('auth/register', data: formData);
+    final Response response = await _dio.post(
+      'auth/register',
+      data: formData,
+    );
     if (response.statusCode == 200) {
       return response.data;
     } else {
@@ -38,7 +43,7 @@ class AuthService {
     }
   }
 
-  Future login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     final Response response = await _dio.post(
       'auth/login',
       data: {
@@ -46,8 +51,12 @@ class AuthService {
         'password': password,
       },
     );
+
     if (response.statusCode == 200) {
-      return response.data;
+      var map = Map<String, dynamic>.from(response.data);
+      log('fetched Complete');
+      log(map.toString());
+      return map;
     } else {
       throw DioException(
         requestOptions: response.requestOptions,
