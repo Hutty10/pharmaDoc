@@ -1,13 +1,21 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gap/gap.dart';
+import 'package:health_proj/core/providers.dart';
 import 'package:health_proj/features/auth/controllers/provider/userprovider.dart';
+import 'package:health_proj/features/auth/controllers/service/auth_service.dart';
 import 'package:health_proj/features/auth/models/doctor.dart';
+import 'package:health_proj/features/auth/models/user.dart';
+import 'package:health_proj/features/auth/views/widgets/label_textfield.dart';
 import 'package:health_proj/features/settings_profile/presentation/widgets/biocard.dart';
 import 'package:health_proj/features/settings_profile/presentation/widgets/customprogresslisttile.dart';
 import 'package:health_proj/features/settings_profile/presentation/widgets/optioncard.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SettingsprofilePage extends StatelessWidget {
   const SettingsprofilePage({super.key});
@@ -93,38 +101,38 @@ class EditPatientScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _EditPatientScreenState();
 }
+
 class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
   final _firstNameController = TextEditingController();
+  final _licenseController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _specializationController = TextEditingController();
   final _licenseNumberController = TextEditingController();
   // Add controllers for other optional fields (gender, state, address, etc.)
+  User? pharm;
 
   @override
-  void initState() {
-    super.initState();
-
-    // Retrieve the patient data from the provider
-    final pharm = ref.watch(userDataProvider);
-
+  void didChangeDependencies() {
+    pharm = ref.watch(userDataProvider);
     if (pharm != null) {
-      // Update the state using dedicated methods (if available)
-      // Assuming your StateNotifier has these methods
-      ref.read(editPatientProvider).setFirstName(pharm.firstName);
-      ref.read(editPatientProvider).setLastName(pharm.lastName);
-      ref.read(editPatientProvider).setEmail(pharm.email);
-      ref.read(editPatientProvider).setPhone(pharm.phone);
-      ref.read(editPatientProvider).setSpecialization(pharm.specialization ?? '');
-      ref.read(editPatientProvider).setLicenseNumber(pharm.licenseNumber ?? '');
+      _firstNameController.text = pharm!.firstName;
+      _lastNameController.text = pharm!.lastName;
+      _emailController.text = pharm!.email;
+      _phoneController.text = pharm!.phone;
+      _specializationController.text =
+          pharm!.specialization ?? ''; // Handle null value
+      _licenseNumberController.text = pharm!.licenseNumber ?? '';
+      // Set values for other controllers from the Doctor object
     }
+    super.didChangeDependencies();
   }
-}
 
   @override
   Widget build(BuildContext context) {
-    log(ref.watch(userDataProvider).toString());
+    log(ref.watch(userDataProvider)!.toMap().toString());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Doctor Profile'),
@@ -133,7 +141,8 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
         padding: const EdgeInsets.all(8.0),
         child: OutlinedButton(
           onPressed: () {
-            // Implement update logic using the form data
+            var authService = AuthService(dio: ref.watch(dioProvider));
+            authService.updateUserCredentials(pharm!, ref);
           },
           child: const Text('Update'),
         ),
@@ -217,6 +226,37 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              Gap(20.h),
+              LabelTextField(
+                controller: _licenseController,
+                readOnly: true,
+                onTap: () async {
+                  Future<String?> pickLicenseCertificateImage() async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (image != null) {
+                      return image.path;
+                    } else {
+                      return null;
+                    }
+                  }
+
+                  final String? license = await pickLicenseCertificateImage();
+                  if (license != null) {
+                    setState(() {
+                      _licenseController.text = license;
+                    });
+                  }
+                },
+                label: 'License/Certificate',
+                hintText: 'Re-Upload your license',
+                // keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+              ),
+              Gap(20.h),
+
               // Add TextFields for other optional fields (gender, state, address, etc.)
             ],
           ),

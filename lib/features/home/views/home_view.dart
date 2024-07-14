@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_proj/features/auth/controllers/provider/userprovider.dart';
 
 import '../../../core/constants/app_assets.dart';
 import './widgets/glass_morphism.dart';
@@ -13,7 +14,7 @@ class HomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ThemeData theme = Theme.of(context);
-    const String name = 'Hutty';
+    String name = ref.watch(userDataProvider)!.firstName;
     const int onb = 3000;
 
     return Scaffold(

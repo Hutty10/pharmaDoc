@@ -2,10 +2,33 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:health_proj/features/auth/models/user.dart';
 
 class AuthService {
   AuthService({required Dio dio}) : _dio = dio;
   final Dio _dio;
+  Future updateUserCredentials(User user, ref) async {
+    final token = user.token;
+
+    // Add Authorization header with Bearer token type
+    _dio.options.headers["Authorization"] = "Bearer $token";
+
+    final Response response = await _dio.put(
+      'user/update',
+      data: user.toMap(),
+    );
+
+    if (response.statusCode == 200) {
+      var map = Map<String, dynamic>.from(response.data);
+      log(map.toString());
+      return map;
+    } else {
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+      );
+    }
+  }
 
   Future register(
     String email,
