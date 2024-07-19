@@ -11,6 +11,7 @@ class RouteName {
   static const String settings = 'settings';
   static const String addVitals = 'add-vitals';
   static const String referPatient = 'refer-patient';
+  static const String referPatientSummary = 'refer-patient-summary';
   static const String addPatient = 'add-patient';
   static const String patientSummary = 'patient-summary';
   static const String patientVitals = 'patient-vitals';

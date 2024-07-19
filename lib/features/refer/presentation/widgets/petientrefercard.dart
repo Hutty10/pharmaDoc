@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_proj/features/refer/presentation/widgets/patientreferinfotext.dart';
 
-import '../../../patient/view/refer_patient_view.dart';
+import '../pages/refersummaryview.dart';
 
 class PatientReferCard extends StatelessWidget {
   const PatientReferCard({
@@ -35,9 +35,7 @@ class PatientReferCard extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ReferPatientView(
-                                patientId: 't976',
-                              )));
+                          builder: (context) => ReferSummaryView()));
                 },
                 style: OutlinedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite * 0.25, 20),

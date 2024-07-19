@@ -103,6 +103,14 @@ final goRouterProvider = Provider<GoRouter>(
               },
             ),
             GoRoute(
+              path: ':id',
+              name: RouteName.patientSummary,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return PatientSummaryView(patientId: id);
+              },
+            ),
+            GoRoute(
               path: ':id/${RouteName.patientVitals}',
               name: RouteName.patientVitals,
               builder: (context, state) {
