@@ -103,36 +103,117 @@ class EditPatientScreen extends ConsumerStatefulWidget {
 }
 
 class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
-  final _firstNameController = TextEditingController();
-  final _licenseController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _specializationController = TextEditingController();
-  final _licenseNumberController = TextEditingController();
+  late TextEditingController _firstNameController;
+  late TextEditingController _genderController;
+  String? newlicenseFile;
+  late TextEditingController _licenseCertificateController;
+  late TextEditingController _lastNameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController currentpractisingstate;
+  late TextEditingController _specializationController;
+  late TextEditingController currentPractisingAddress;
+  late TextEditingController _licenseNumberController;
   // Add controllers for other optional fields (gender, state, address, etc.)
   User? pharm;
+  String? oldphoneNumber;
 
   @override
   void didChangeDependencies() {
     pharm = ref.watch(userDataProvider);
+    oldphoneNumber = pharm!.phone;
     if (pharm != null) {
-      _firstNameController.text = pharm!.firstName;
-      _lastNameController.text = pharm!.lastName;
-      _emailController.text = pharm!.email;
-      _phoneController.text = pharm!.phone;
-      _specializationController.text =
-          pharm!.specialization ?? ''; // Handle null value
-      _licenseNumberController.text = pharm!.licenseNumber ?? '';
-      // Set values for other controllers from the Doctor object
+      // Set controllers for all fields
+      currentpractisingstate =
+          TextEditingController(text: pharm!.currentPractisingState)
+            ..addListener(
+              () {
+                setState(() {
+                  pharm = pharm!.copyWith(
+                      currentPractisingState: currentpractisingstate.text);
+                });
+              },
+            );
+      currentPractisingAddress =
+          TextEditingController(text: pharm!.currentPractisingAddress)
+            ..addListener(
+              () {
+                setState(() {
+                  pharm = pharm!.copyWith(
+                      currentPractisingAddress: currentPractisingAddress.text);
+                });
+              },
+            );
+
+      _firstNameController = TextEditingController(text: pharm!.firstName)
+        ..addListener(
+          () {
+            setState(() {
+              pharm = pharm!.copyWith(firstName: _firstNameController.text);
+            });
+          },
+        );
+      _lastNameController = TextEditingController(text: pharm!.lastName)
+        ..addListener(
+          () {
+            setState(() {
+              pharm = pharm!.copyWith(lastName: _lastNameController.text);
+            });
+          },
+        );
+      _genderController = TextEditingController(text: pharm!.gender ?? '')
+        ..addListener(
+          () {
+            setState(() {
+              pharm = pharm!.copyWith(gender: _genderController.text);
+            });
+          },
+        );
+      _emailController = TextEditingController(text: pharm!.email)
+        ..addListener(
+          () {
+            setState(() {
+              pharm = pharm!.copyWith(email: _emailController.text);
+            });
+          },
+        );
+      _phoneController = TextEditingController(text: pharm!.phone)
+        ..addListener(
+          () {
+            setState(() {
+              pharm = pharm!.copyWith(phone: _phoneController.text);
+            });
+          },
+        );
+      _specializationController =
+          TextEditingController(text: pharm!.specialization ?? '')
+            ..addListener(
+              () {
+                setState(() {
+                  pharm = pharm!
+                      .copyWith(specialization: _specializationController.text);
+                });
+              },
+            );
+      _licenseCertificateController =
+          TextEditingController(text: pharm!.licenseCertificate);
+      _licenseNumberController = TextEditingController(
+          text: pharm!.licenseNumber ?? '')
+        ..addListener(
+          () {
+            setState(() {
+              pharm =
+                  pharm!.copyWith(licenseNumber: _licenseNumberController.text);
+            });
+          },
+        );
     }
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    log(ref.watch(userDataProvider)!.toMap().toString());
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Doctor Profile'),
@@ -141,8 +222,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
         padding: const EdgeInsets.all(8.0),
         child: OutlinedButton(
           onPressed: () {
-            var authService = AuthService(dio: ref.watch(dioProvider));
-            authService.updateUserCredentials(pharm!, ref);
+            updateProfileData(context);
           },
           child: const Text('Update'),
         ),
@@ -153,6 +233,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
           child: Column(
             children: [
               TextField(
+                enabled: false,
                 controller: _firstNameController,
                 decoration: InputDecoration(
                   labelText: 'First Name',
@@ -165,6 +246,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                 ),
               ),
               TextField(
+                enabled: false,
                 controller: _lastNameController,
                 decoration: InputDecoration(
                   labelText: 'Last Name',
@@ -177,6 +259,20 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                 ),
               ),
               TextField(
+                enabled: false,
+                controller: _genderController,
+                decoration: InputDecoration(
+                  labelText: 'Gender',
+                  constraints: const BoxConstraints(
+                    minHeight: 100.0,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              TextField(
+                enabled: false,
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
@@ -203,6 +299,31 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                 ),
               ),
               TextField(
+                controller: currentPractisingAddress,
+                decoration: InputDecoration(
+                  labelText: 'current_practising_address',
+                  constraints: const BoxConstraints(
+                    minHeight: 100.0,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: currentpractisingstate,
+                decoration: InputDecoration(
+                  labelText: 'current_practising_state',
+                  constraints: const BoxConstraints(
+                    minHeight: 100.0,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              TextField(
+                enabled: false,
                 controller: _specializationController,
                 decoration: InputDecoration(
                   labelText: 'Specialization (Optional)',
@@ -215,6 +336,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                 ),
               ),
               TextField(
+                enabled: false,
                 controller: _licenseNumberController,
                 decoration: InputDecoration(
                   labelText: 'License Number (Optional)',
@@ -228,7 +350,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
               ),
               Gap(20.h),
               LabelTextField(
-                controller: _licenseController,
+                controller: _licenseCertificateController,
                 readOnly: true,
                 onTap: () async {
                   Future<String?> pickLicenseCertificateImage() async {
@@ -243,10 +365,10 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                     }
                   }
 
-                  final String? license = await pickLicenseCertificateImage();
-                  if (license != null) {
+                  String? newlicenseFile = await pickLicenseCertificateImage();
+                  if (newlicenseFile != null) {
                     setState(() {
-                      _licenseController.text = license;
+                      _licenseCertificateController.text = newlicenseFile;
                     });
                   }
                 },
@@ -263,5 +385,33 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
         ),
       ),
     );
+  }
+
+  void updateProfileData(BuildContext context) {
+    if (oldphoneNumber != pharm!.phone) {
+      log(pharm.toString());
+      var authService = AuthService(dio: ref.watch(dioProvider));
+      authService.updateUserCredentials(pharm!, newlicenseFile, ref).then(
+        (value) {
+          return showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Close'))
+              ],
+              title: const Text('Notification'),
+              content: Text('${value['message']}'),
+            ),
+          );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Update your phone number')));
+    }
   }
 }

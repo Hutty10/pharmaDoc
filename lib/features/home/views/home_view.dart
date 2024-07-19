@@ -14,7 +14,9 @@ class HomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ThemeData theme = Theme.of(context);
-    String name = ref.watch(userDataProvider)!.firstName;
+    String name = ref.watch(userDataProvider) != null
+        ? ref.watch(userDataProvider)!.firstName
+        : 'Hutty';
     const int onb = 3000;
 
     return Scaffold(

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-abstract class User {
+class User {
   final int id;
   final String firstName;
   final String lastName;
@@ -39,24 +39,61 @@ abstract class User {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
+      'email': email,
       'firstName': firstName,
       'lastName': lastName,
-      'specialization': specialization,
-      'email': email,
-      'phone': phone,
-      'gender': gender,
-      'type': type,
-      'licenseNumber': licenseNumber,
+      'userType': 'pharm',
       'licenseCertificate': licenseCertificate,
-      'currentPractisingState': currentPractisingState,
-      'currentPractisingAddress': currentPractisingAddress,
-      'isActive': isActive,
-      'photo': photo,
-      'tempPhrase': tempPhrase,
-      'token': token,
+      "phone": phone,
+      "current_practising_address": "qqqq",
+      "current_practising_state": "Lagos"
     };
   }
 
   String toJson() => json.encode(toMap());
+
+  User copyWith({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? specialization,
+    String? email,
+    String? phone,
+    String? gender,
+    String? type,
+    String? licenseNumber,
+    String? licenseCertificate,
+    String? currentPractisingState,
+    String? currentPractisingAddress,
+    bool? isActive,
+    String? photo,
+    String? tempPhrase,
+    String? token,
+  }) {
+    return User(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      specialization: specialization ?? this.specialization,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      gender: gender ?? this.gender,
+      type: type ?? this.type,
+      licenseNumber: licenseNumber ?? this.licenseNumber,
+      licenseCertificate: licenseCertificate ?? this.licenseCertificate,
+      currentPractisingState:
+          currentPractisingState ?? this.currentPractisingState,
+      currentPractisingAddress:
+          currentPractisingAddress ?? this.currentPractisingAddress,
+      isActive: isActive ?? this.isActive,
+      photo: photo ?? this.photo,
+      tempPhrase: tempPhrase ?? this.tempPhrase,
+      token: token ?? this.token,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, firstName: $firstName, lastName: $lastName, specialization: $specialization, email: $email, phone: $phone, gender: $gender, type: $type, licenseNumber: $licenseNumber, licenseCertificate: $licenseCertificate, currentPractisingState: $currentPractisingState, currentPractisingAddress: $currentPractisingAddress, isActive: $isActive, photo: $photo, tempPhrase: $tempPhrase, token: $token)';
+  }
 }

@@ -52,9 +52,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(isLoggedIn: isLoggedIn);
   void setError(String? error) => state = state.copyWith(error: error);
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     setLoading(true);
-    late Map<String, dynamic> responseData;
+    Map<String, dynamic>? responseData;
     try {
       await _authRepository.login(email: email, password: password).then(
         (value) {

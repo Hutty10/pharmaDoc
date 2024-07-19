@@ -7,15 +7,22 @@ import 'package:health_proj/features/auth/models/user.dart';
 class AuthService {
   AuthService({required Dio dio}) : _dio = dio;
   final Dio _dio;
-  Future updateUserCredentials(User user, ref) async {
+  Future<Map<String, dynamic>> updateUserCredentials(
+      User user, String? licenseFIle, ref) async {
     final token = user.token;
 
-    // Add Authorization header with Bearer token type
     _dio.options.headers["Authorization"] = "Bearer $token";
+    log(token);
 
+    var data = {
+      "phone": user.phone,
+      "current_practising_address": user.currentPractisingAddress,
+      "current_practising_state": user.currentPractisingState
+    };
+    log(data.toString());
     final Response response = await _dio.put(
       'user/update',
-      data: user.toMap(),
+      data: data,
     );
 
     if (response.statusCode == 200) {

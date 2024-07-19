@@ -18,7 +18,6 @@ final class RedirectIfAuthenticatedGuard extends Guard {
     if (token != null) {
       return '/home';
     }
-
     return null;
   }
 }

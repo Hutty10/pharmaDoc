@@ -52,14 +52,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
     await ref.read(authNotifierProvider.notifier).login(email, password).then(
       (value) {
         log('dat recieved $value');
-        if (value['type'] == 'pharm') {
-          ref
-              .watch(userDataProvider.notifier)
-              .assignUser(Pharm.fromJson(value));
-        } else {
-          ref
-              .watch(userDataProvider.notifier)
-              .assignUser(Doctor.fromJson(value));
+        if (value != null) {
+          if (value['type'] == 'pharm') {
+            ref
+                .watch(userDataProvider.notifier)
+                .assignUser(Pharm.fromJson(value));
+          } else {
+            ref
+                .watch(userDataProvider.notifier)
+                .assignUser(Doctor.fromJson(value));
+          }
         }
       },
     );
