@@ -235,7 +235,9 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text('First Name'),
               TextField(
                 enabled: false,
                 controller: _firstNameController,
@@ -249,6 +251,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Last Name'),
               TextField(
                 enabled: false,
                 controller: _lastNameController,
@@ -262,6 +265,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Gender'),
               TextField(
                 enabled: false,
                 controller: _genderController,
@@ -275,6 +279,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Email'),
               TextField(
                 enabled: false,
                 controller: _emailController,
@@ -289,6 +294,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Phone Number'),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
@@ -302,10 +308,10 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Current Practising Address'),
               TextField(
                 controller: currentPractisingAddress,
                 decoration: InputDecoration(
-                  labelText: 'current_practising_address',
                   constraints: const BoxConstraints(
                     minHeight: 100.0,
                   ),
@@ -314,6 +320,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Current Practising State'),
               TextField(
                 controller: currentpractisingstate,
                 decoration: InputDecoration(
@@ -326,6 +333,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('Specialization'),
               TextField(
                 enabled: false,
                 controller: _specializationController,
@@ -339,11 +347,11 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
                   ),
                 ),
               ),
+              const Text('License Number (Optional)'),
               TextField(
                 enabled: false,
                 controller: _licenseNumberController,
                 decoration: InputDecoration(
-                  labelText: 'License Number (Optional)',
                   constraints: const BoxConstraints(
                     minHeight: 100.0,
                   ),
