@@ -216,7 +216,7 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Doctor Profile'),
+        title: const Text('Edit Profile'),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
