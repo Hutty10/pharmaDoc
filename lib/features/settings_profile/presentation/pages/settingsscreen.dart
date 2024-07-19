@@ -222,7 +222,11 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
         padding: const EdgeInsets.all(8.0),
         child: OutlinedButton(
           onPressed: () {
-            updateProfileData(context);
+            updateProfileData(context, (newphoneNumber) {
+              setState(() {
+                oldphoneNumber = newphoneNumber;
+              });
+            });
           },
           child: const Text('Update'),
         ),
@@ -387,12 +391,14 @@ class _EditPatientScreenState extends ConsumerState<EditPatientScreen> {
     );
   }
 
-  void updateProfileData(BuildContext context) {
+  void updateProfileData(
+      BuildContext context, Function(String number) updateNumber) {
     if (oldphoneNumber != pharm!.phone) {
       log(pharm.toString());
       var authService = AuthService(dio: ref.watch(dioProvider));
       authService.updateUserCredentials(pharm!, newlicenseFile, ref).then(
         (value) {
+          updateNumber(pharm!.phone);
           return showDialog(
             context: context,
             builder: (context) => AlertDialog(
