@@ -23,7 +23,7 @@ class ReferSummaryView extends StatelessWidget {
           children: [
             ListTile(
               trailing: Card(
-                color: AppColors.flexSchemeDark.onErrorContainer,
+                color: AppColors.flexSchemeDark.surfaceTint,
                 child: const SizedBox(
                   height: 50,
                   width: 50,
@@ -44,11 +44,11 @@ class ReferSummaryView extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Card(
-                color: AppColors.flexSchemeDark.onErrorContainer,
-                child: const SizedBox(
+                color: AppColors.flexSchemeDark.primaryContainer,
+                child: SizedBox(
                   height: 50,
                   width: 50,
-                  child: Icon(Icons.person),
+                  child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
               subtitle: const Text('Senior Pharmacist'),
@@ -61,11 +61,11 @@ class ReferSummaryView extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Card(
-                color: AppColors.flexSchemeDark.onErrorContainer,
+                color: AppColors.flexSchemeDark.primaryContainer,
                 child: const SizedBox(
                   height: 50,
                   width: 50,
-                  child: Icon(Icons.person),
+                  child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
               subtitle: const Text('Doctor'),

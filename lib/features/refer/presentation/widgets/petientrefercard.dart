@@ -35,7 +35,10 @@ class PatientReferCard extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  context.go(RouteName.referPatientSummary);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReferSummaryView()));
                 },
                 style: OutlinedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite * 0.25, 20),
