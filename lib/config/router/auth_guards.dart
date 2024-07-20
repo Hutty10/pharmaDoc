@@ -13,12 +13,11 @@ final class RedirectIfAuthenticatedGuard extends Guard {
   @override
   Future<String?> redirect(BuildContext context, GoRouterState state) async {
     final container = ProviderScope.containerOf(context, listen: false);
-    final token = await container.read(authRepositoryProvider).getToken();
-
+    // var token = await container.read(authRepositoryProvider).getToken();
+    var token = null;
     if (token != null) {
       return '/home';
     }
-
     return null;
   }
 }

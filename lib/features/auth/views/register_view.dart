@@ -41,6 +41,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
   void initState() {
     super.initState();
     _formKey = GlobalKey<FormState>();
+    _userTypeController = TextEditingController();
     _firstnameController = TextEditingController();
     _lastnameController = TextEditingController();
     _emailController = TextEditingController();
