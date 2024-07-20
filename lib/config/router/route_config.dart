@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show GlobalKey, NavigatorState;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,12 +85,18 @@ final goRouterProvider = Provider<GoRouter>(
                 return const AddPatientScreen();
               },
             ),
+
             GoRoute(
-              path: ':id/${RouteName.addVitals}',
+              path: RouteName.newDocPatient,
+              name: RouteName.newDocPatient,
+              builder: (context, state) => const SearchNewReferal(),
+            ),
+            GoRoute(
+              path: ':phone/${RouteName.addVitals}',
               name: RouteName.addVitals,
               builder: (context, state) {
-                final id = state.pathParameters['id']!;
-                return AddVitalsView(patientId: id);
+                final phone = state.pathParameters['phone']!;
+                return AddVitalsView(patientPhone: phone);
               },
             ),
             GoRoute(
@@ -99,15 +104,19 @@ final goRouterProvider = Provider<GoRouter>(
               name: RouteName.referPatient,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
-                return ReferPatientView(patientId: id);
+                final serialNo = state.uri.queryParameters['serial_no']!;
+                return ReferPatientView(
+                  patientId: id,
+                  patientSerialNo: serialNo,
+                );
               },
             ),
             GoRoute(
-              path: ':id',
+              path: ':phone',
               name: RouteName.patientSummary,
               builder: (context, state) {
-                final id = state.pathParameters['id']!;
-                return PatientSummaryView(patientId: id);
+                final id = state.pathParameters['phone']!;
+                return PatientSummaryView(patientPhone: id);
               },
             ),
             GoRoute(

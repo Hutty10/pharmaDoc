@@ -46,6 +46,7 @@ dependencies:
   freezed_annotation: ^2.4.2
   json_annotation: ^4.9.0
   image_picker: ^1.1.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -89,10 +90,10 @@ flutter:
 
 flutter_native_splash:
   color: "#386a1f"
-  image: assets/dev/logox4.png
+  image: assets/dev/logo_112X22.png
   android: true
   ios: true
   android_12:
     color: "#386a1f"
-    image: assets/dev/logox4.png
+    image: assets/dev/logo_112X22.png
     

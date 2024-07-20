@@ -27,7 +27,7 @@ class AuthService {
         filename: licenseCertificate.path.split('/').last,
       ),
     });
-    final Response response = await _dio.post('auth/register', data: formData);
+    final Response response = await _dio.post('/auth/register', data: formData);
     if (response.statusCode == 200) {
       return response.data;
     } else {
@@ -40,7 +40,7 @@ class AuthService {
 
   Future login(String email, String password) async {
     final Response response = await _dio.post(
-      'auth/login',
+      '/auth/login',
       data: {
         'email': email,
         'password': password,

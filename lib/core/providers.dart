@@ -9,9 +9,19 @@ final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
 final dioProvider = Provider<Dio>(
   (ref) {
     final dio = Dio();
-    dio.options.baseUrl = 'https:replacewith_api_base_url';
+    dio.options.baseUrl = 'https://pharmdoc.gofortedigitals.com';
     dio.options.headers['Content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';
     return dio;
   },
 );
+
+final tokenProvider = FutureProvider<String?>((ref) async {
+  final secureStorage = ref.watch(secureStorageProvider);
+  return await secureStorage.read(key: 'auth_token');
+});
+
+final userTypeProvider = FutureProvider<String?>((ref) async {
+  final secureStorage = ref.read(secureStorageProvider);
+  return await secureStorage.read(key: 'user_type');
+});
