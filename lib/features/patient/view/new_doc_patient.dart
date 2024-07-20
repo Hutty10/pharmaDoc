@@ -115,7 +115,7 @@ class _SearchNewReferalState extends ConsumerState<SearchNewReferal> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${data.first.patient.firstName} ${data.first.patient.lastName}',
+                                      '${data.first.patient.firstName} ${data.first.patient.lastName}'.toTitleCase,
                                       style: theme.textTheme.titleMedium,
                                     ),
                                     Text(DateFormat('yyyy-MM-dd')
