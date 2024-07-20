@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_proj/features/patient/models/patient.dart';
 
 import '../../../core/utils/validators.dart';
+import '../providers/providers.dart';
 import 'widgets/vitals_form_field.dart';
 
 class AddPatientScreen extends ConsumerStatefulWidget {
@@ -23,6 +28,7 @@ class _AddPatientScreenState extends ConsumerState<AddPatientScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _stateOfOriginController = TextEditingController();
+  bool _isLoaded = false;
 
   @override
   void dispose() {
@@ -38,10 +44,39 @@ class _AddPatientScreenState extends ConsumerState<AddPatientScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Process the form data
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Patient details added successfully!')),
+      // _formKey.currentState!.save();
+      setState(() {
+        _isLoaded = true;
+      });
+      final patient = Patient(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        age: _ageController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        address: _addressController.text,
+        stateOfOrigin: _stateOfOriginController.text,
       );
+      try {
+        ref.read(addPatientProvider(patient));
+        log('Done adding Patient');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Patient details added successfully!')),
+        );
+
+        context.pop();
+        ff() => ref.refresh(getPatientProvider);
+        ff;
+      } catch (e) {
+        log('Error adding patient $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to add patient $e')),
+        );
+      } finally {
+        setState(() {
+          _isLoaded = false;
+        });
+      }
     }
   }
 
@@ -120,10 +155,25 @@ class _AddPatientScreenState extends ConsumerState<AddPatientScreen> {
                             onPressed: _firstNameController.text.isNotEmpty &&
                                     _lastNameController.text.isNotEmpty &&
                                     _ageController.text.isNotEmpty &&
-                                    _phoneController.text.isNotEmpty
+                                    _phoneController.text.isNotEmpty &&
+                                    !_isLoaded
                                 ? _submitForm
                                 : null,
-                            child: const Text('Add Patient'),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                if (_isLoaded) ...[
+                                  const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  const Gap(16),
+                                ],
+                                const Text('Add Patient'),
+                              ],
+                            ),
                           );
                         }),
                   ),

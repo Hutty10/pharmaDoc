@@ -12,16 +12,20 @@ class PatientCard extends StatelessWidget {
     required this.id,
     required this.name,
     required this.time,
+    required this.phone,
+    required this.serialNo,
   });
   final String id;
   final String name;
-  final DateTime time;
+  final String time;
+  final String phone;
+  final String serialNo;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => context.go('/${RouteName.patient}/$id'),
+      onTap: () => context.go('/${RouteName.patient}/$phone'),
       child: Card(
         elevation: 2,
         surfaceTintColor: Colors.transparent,
@@ -48,19 +52,19 @@ class PatientCard extends StatelessWidget {
                       name.toTitleCase,
                       style: theme.textTheme.titleMedium,
                     ),
-                    Text(time.toString().split(' ')[0]),
+                    Text(time),
                     ButtonBar(
                       buttonPadding: EdgeInsets.zero,
                       children: [
                         TextButton(
                           onPressed: () => context.go(
-                            '/${RouteName.patient}/$id/${RouteName.addVitals}',
+                            '/${RouteName.patient}/$phone/${RouteName.addVitals}',
                           ),
                           child: const Text('Add Vitals'),
                         ),
                         TextButton(
                           onPressed: () => context.go(
-                            '/${RouteName.patient}/$id/${RouteName.referPatient}',
+                            '/${RouteName.patient}/$id/${RouteName.referPatient}?serial_no=$serialNo',
                           ),
                           child: const Text('Refer to Specialist'),
                         ),

@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_proj/features/patient/providers/providers.dart';
 
 import 'widgets/vitals_form_field.dart';
 
-class AddVitalsView extends StatefulWidget {
-  const AddVitalsView({super.key, required this.patientId});
-  final String patientId;
+class AddVitalsView extends ConsumerStatefulWidget {
+  const AddVitalsView({super.key, required this.patientPhone});
+  final String patientPhone;
 
   @override
-  State<AddVitalsView> createState() => _AddVitalsViewState();
+  ConsumerState<AddVitalsView> createState() => _AddVitalsViewState();
 }
 
-class _AddVitalsViewState extends State<AddVitalsView> {
+class _AddVitalsViewState extends ConsumerState<AddVitalsView> {
   late GlobalKey<FormState> _formKey;
   late TextEditingController _vitalTypeController,
       _resultController,
       _remarksController;
+  bool _isLoading = false;
   @override
   void initState() {
     _formKey = GlobalKey<FormState>();
@@ -31,6 +36,43 @@ class _AddVitalsViewState extends State<AddVitalsView> {
     _resultController.dispose();
     _remarksController.dispose();
     super.dispose();
+  }
+
+  _trySubmit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final vitals = {
+        'vital_type': _vitalTypeController.text,
+        'result': _resultController.text,
+        'remark': _remarksController.text,
+        'patient_phone': widget.patientPhone,
+      };
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        ref.read(addPatientVitalProvider(vitals));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Vitals added successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.pop();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      // Process the input data
+      // Save the data or send it to the server
+    }
   }
 
   // String _selectedVitalType = 'Blood Pressure';
@@ -99,15 +141,40 @@ class _AddVitalsViewState extends State<AddVitalsView> {
                 ),
                 SizedBox(height: 20.h),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        // Process the input data
-                        // Save the data or send it to the server
-                      }
-                    },
-                    child: const Text('Save Vitals'),
-                  ),
+                  child: ListenableBuilder(
+                      listenable: Listenable.merge([
+                        _vitalTypeController,
+                        _resultController,
+                        _remarksController,
+                      ]),
+                      builder: (context, child) {
+                        return ElevatedButton(
+                          onPressed: _vitalTypeController.text.isNotEmpty &&
+                                  _resultController.text.isNotEmpty &&
+                                  _remarksController.text.isNotEmpty &&
+                                  !_isLoading
+                              ? _trySubmit
+                              : null,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (_isLoading) ...[
+                                const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                const Gap(16)
+                              ],
+                              const Text('Save Vitals'),
+                            ],
+                          ),
+                        );
+                      }),
                 ),
               ],
             ),

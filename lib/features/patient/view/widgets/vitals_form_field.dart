@@ -9,6 +9,7 @@ class PatientFormField extends StatelessWidget {
     required this.label,
     required this.hintText,
     this.validator,
+    this.onChanged,
     this.isDescription = false,
   });
 
@@ -17,6 +18,7 @@ class PatientFormField extends StatelessWidget {
   final String label;
   final String hintText;
   final bool isDescription;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class PatientFormField extends StatelessWidget {
             height: isDescription ? 100.h : null,
             child: TextFormField(
               controller: controller,
+              onChanged: onChanged,
               decoration: InputDecoration(
                 hintText: hintText,
                 constraints: isDescription
