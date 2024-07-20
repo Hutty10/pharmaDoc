@@ -9,6 +9,7 @@ import '../../core/utils/extensions/string_extension.dart';
 import '../../core/widgets/bottom_nav.dart';
 import '../../features/auth/views/views.dart';
 import '../../features/patient/view/views.dart';
+import '../../features/refer/presentation/pages/refersummaryview.dart';
 import './route_path.dart';
 import './error_page.dart';
 import 'auth_guards.dart';

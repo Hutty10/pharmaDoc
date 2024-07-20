@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:health_proj/features/refer/presentation/widgets/patientreferinfotext.dart';
 import 'package:health_proj/features/refer/presentation/widgets/petientrefercard.dart';
 
 class ReferScreen extends StatelessWidget {

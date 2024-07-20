@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_proj/config/router/route_path.dart';
+import 'package:health_proj/core/utils/extensions/string_extension.dart';
 import 'package:health_proj/features/refer/presentation/widgets/patientreferinfotext.dart';
 
 import '../pages/refersummaryview.dart';
@@ -32,10 +35,7 @@ class PatientReferCard extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ReferSummaryView()));
+                  context.go(RouteName.referPatientSummary);
                 },
                 style: OutlinedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite * 0.25, 20),
