@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_proj/core/utils/extensions/string_extension.dart';
 import 'package:health_proj/features/auth/controllers/provider/userprovider.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../patient/models/patient.dart';
+import '../../patient/providers/providers.dart';
 import '../providers/providers.dart';
 import './widgets/glass_morphism.dart';
 
@@ -123,14 +127,26 @@ class HomeView extends ConsumerWidget {
             ),
             Gap(10.h),
             Expanded(
-              child: ref.watch(recentPatientProvider).when(
+              child: ref.watch(getPatientProvider).when(
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
-                    data: (data) => const RecentPatientList(
-                        // patients: data,
-                        ),
+                    data: (data) {
+                      final int count = data.length < 10 ? data.length : 10;
+                      final lastElements = data.sublist(
+                        data.length - count,
+                        data.length,
+                      );
+                      if (lastElements.isEmpty) {
+                        return const Center(
+                          child: Text('No patients onboarded yet'),
+                        );
+                      }
+                      return RecentPatientList(patients: lastElements);
+
+                      // patients: data,
+                    },
                     error: (error, _) => const Center(
-                      child: RecentPatientList(),
+                      child: Text('Error fetching patients'),
                     ),
                   ),
             ),
@@ -144,15 +160,17 @@ class HomeView extends ConsumerWidget {
 class RecentPatientList extends StatelessWidget {
   const RecentPatientList({
     super.key,
-    // required this.patients,
+    required this.patients,
   });
-  // final List<Patient> patients;
+  final List<Patient> patients;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: patients.length,
       itemBuilder: (context, index) {
+        log(patients.length.toString());
+        final patient = patients[index];
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 8.h),
           child: ListTile(
@@ -164,9 +182,8 @@ class RecentPatientList extends StatelessWidget {
               // backgroundImage:
               //     const AssetImage('assets/images/profile.jpg'),
             ),
-            title: Text('Ayomide Ayo $index'),
-            subtitle:
-                Text('Last visit: ${DateTime.now().toString().split(' ')[0]}'),
+            title: Text('${patient.firstName} ${patient.lastName}'.toTitleCase),
+            subtitle: Text('Phone: ${patient.phone}'),
             trailing: const Icon(Icons.arrow_forward),
           ),
         );

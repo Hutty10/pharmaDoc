@@ -12,7 +12,7 @@ class ReferScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Refarals'),
+        title: const Text('Referals'),
       ),
       body: ListView.separated(
         itemCount: 4,

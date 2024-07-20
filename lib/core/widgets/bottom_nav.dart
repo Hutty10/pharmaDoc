@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_proj/features/refer/presentation/pages/referscreen.dart';
-import 'package:health_proj/features/settings_profile/presentation/pages/settingsscreen.dart';
 import '../../features/home/views/views.dart';
 import '../../features/patient/view/views.dart';
+import '../../features/refer/presentation/pages/referscreen.dart';
+import '../../features/settings_profile/presentation/pages/settingsscreen.dart';
+import '../providers.dart';
 import '../utils/extensions/string_extension.dart';
 
 import '../../config/router/route_path.dart';
 
-class BottomNav extends StatefulWidget {
+class BottomNav extends ConsumerStatefulWidget {
   BottomNav({
     super.key,
     required String tab,
@@ -16,7 +18,7 @@ class BottomNav extends StatefulWidget {
   final int index;
 
   @override
-  State<BottomNav> createState() => _BottomNavState();
+  ConsumerState<BottomNav> createState() => _BottomNavState();
   static int indexFrom(String tab) {
     switch (tab) {
       case 'home':
@@ -33,7 +35,7 @@ class BottomNav extends StatefulWidget {
   }
 }
 
-class _BottomNavState extends State<BottomNav> {
+class _BottomNavState extends ConsumerState<BottomNav> {
   late int _selectedIndex;
 
   @override
@@ -50,15 +52,16 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(userTypeProvider).value?.toLowerCase() ?? '';
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: const [
-          HomeView(),
-          PatientView(),
-          ReferScreen(),
-          SettingsprofilePage(),
+        children: [
+          const HomeView(),
+          const PatientView(),
+          if (role == 'pharm') const ReferScreen(),
+          const SettingsprofilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -77,7 +80,11 @@ class _BottomNavState extends State<BottomNav> {
                 context.go(RouteName.patient.toPath);
                 break;
               case 2:
-                context.go(RouteName.refers.toPath);
+                if (role == 'pharm') {
+                  context.go(RouteName.refers.toPath);
+                } else {
+                  context.go(RouteName.settings.toPath);
+                }
                 break;
               case 3:
                 context.go(RouteName.settings.toPath);
@@ -85,20 +92,21 @@ class _BottomNavState extends State<BottomNav> {
             }
           });
         },
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.group),
             label: 'Patient',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sync),
-            label: 'Refers',
-          ),
-          BottomNavigationBarItem(
+          if (role == 'pharm')
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.sync),
+              label: 'Refers',
+            ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
