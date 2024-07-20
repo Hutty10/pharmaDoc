@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:health_proj/features/auth/controllers/provider/userprovider.dart';
 
 import '../../../core/constants/app_assets.dart';
+import '../../patient/models/patient.dart';
+import '../providers/providers.dart';
 import './widgets/glass_morphism.dart';
 
 class HomeView extends ConsumerWidget {
@@ -16,8 +18,7 @@ class HomeView extends ConsumerWidget {
     final ThemeData theme = Theme.of(context);
     String name = ref.watch(userDataProvider) != null
         ? ref.watch(userDataProvider)!.firstName
-        : 'Hutty';
-    const int onb = 3000;
+        : 'Error';
 
     return Scaffold(
       appBar: AppBar(
@@ -80,14 +81,28 @@ class HomeView extends ConsumerWidget {
                             ),
                           ),
                           const Gap(4),
-                          Text(
-                            '$onb',
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: theme.colorScheme.inverseSurface,
-                              letterSpacing: -0.05,
-                            ),
-                          ),
+                          ref.watch(countProvider).when(
+                                loading: () =>
+                                    const CircularProgressIndicator(),
+                                data: (data) => Text(
+                                  '$data',
+                                  style:
+                                      theme.textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: theme.colorScheme.inverseSurface,
+                                    letterSpacing: -0.05,
+                                  ),
+                                ),
+                                error: (error, _) => Text(
+                                  '0',
+                                  style:
+                                      theme.textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: theme.colorScheme.inverseSurface,
+                                    letterSpacing: -0.05,
+                                  ),
+                                ),
+                              ),
                           Text(
                             'Patients Onboarded',
                             style: theme.textTheme.titleSmall?.copyWith(
@@ -108,32 +123,54 @@ class HomeView extends ConsumerWidget {
             ),
             Gap(10.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: ListTile(
-                      onTap: () => context.go('/patient/$index'),
-                      leading: CircleAvatar(
-                        radius: 20.r,
-                        backgroundColor: Colors.transparent,
-                        child: const Icon(Icons.man), // Icon(Icons.woman)
-                        // backgroundImage:
-                        //     const AssetImage('assets/images/profile.jpg'),
-                      ),
-                      title: Text('Ayomide Ayo $index'),
-                      subtitle: Text(
-                          'Last visit: ${DateTime.now().toString().split(' ')[0]}'),
-                      trailing: const Icon(Icons.arrow_forward),
+              child: ref.watch(recentPatientProvider).when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    data: (data) => const RecentPatientList(
+                        // patients: data,
+                        ),
+                    error: (error, _) => const Center(
+                      child: RecentPatientList(),
                     ),
-                  );
-                },
-              ),
+                  ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class RecentPatientList extends StatelessWidget {
+  const RecentPatientList({
+    super.key,
+    // required this.patients,
+  });
+  // final List<Patient> patients;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          child: ListTile(
+            onTap: () => context.go('/patient/$index'),
+            leading: CircleAvatar(
+              radius: 20.r,
+              backgroundColor: Colors.transparent,
+              child: const Icon(Icons.man), // Icon(Icons.woman)
+              // backgroundImage:
+              //     const AssetImage('assets/images/profile.jpg'),
+            ),
+            title: Text('Ayomide Ayo $index'),
+            subtitle:
+                Text('Last visit: ${DateTime.now().toString().split(' ')[0]}'),
+            trailing: const Icon(Icons.arrow_forward),
+          ),
+        );
+      },
     );
   }
 }

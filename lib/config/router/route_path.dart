@@ -15,4 +15,5 @@ class RouteName {
   static const String addPatient = 'add-patient';
   static const String patientSummary = 'patient-summary';
   static const String patientVitals = 'patient-vitals';
+  static const String newDocPatient = 'new-doc-patient';
 }
